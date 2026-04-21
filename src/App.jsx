@@ -1,471 +1,244 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-full bg-white">
+    <div className="w-full" style={{ backgroundColor: '#0c1a1a', color: 'white', overflow: 'hidden' }}>
       {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-white shadow-md z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold text-blue-600">💧 FiltroH2O</div>
-          <ul className="hidden md:flex space-x-8 text-gray-700">
-            <li><a href="#hero" className="hover:text-blue-600 transition">Inicio</a></li>
-            <li><a href="#problema" className="hover:text-blue-600 transition">Problema</a></li>
-            <li><a href="#como-funciona" className="hover:text-blue-600 transition">Cómo Funciona</a></li>
-            <li><a href="#beneficios" className="hover:text-blue-600 transition">Beneficios</a></li>
-            <li><a href="#contacto" className="hover:text-blue-600 transition">Contacto</a></li>
-          </ul>
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '1.2rem 4rem',
+        backgroundColor: 'rgba(12,26,26,0.85)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(14,165,233,0.15)'
+      }}>
+        <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#0ea5e9', letterSpacing: '-0.02em' }}>
+          Aqua<span style={{ color: '#16a34a' }}>Bio</span>
         </div>
+        <ul style={{ listStyle: 'none', display: 'flex', gap: '2rem', margin: 0, padding: 0 }}>
+          <li><a href="#problema" style={{ color: 'rgba(240,249,255,0.7)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', transition: 'color 0.3s', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.color = '#0ea5e9'} onMouseOut={(e) => e.target.style.color = 'rgba(240,249,255,0.7)'}>Problema</a></li>
+          <li><a href="#como-funciona" style={{ color: 'rgba(240,249,255,0.7)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', transition: 'color 0.3s', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.color = '#0ea5e9'} onMouseOut={(e) => e.target.style.color = 'rgba(240,249,255,0.7)'}>Cómo Funciona</a></li>
+          <li><a href="#beneficios" style={{ color: 'rgba(240,249,255,0.7)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', transition: 'color 0.3s', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.color = '#0ea5e9'} onMouseOut={(e) => e.target.style.color = 'rgba(240,249,255,0.7)'}>Beneficios</a></li>
+          <li><a href="#contacto" style={{ color: 'white', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', background: '#0ea5e9', padding: '0.5rem 1.4rem', borderRadius: '2rem', transition: 'background 0.3s', cursor: 'pointer' }} onMouseOver={(e) => e.target.style.background = '#16a34a'} onMouseOut={(e) => e.target.style.background = '#0ea5e9'}>Contáctanos</a></li>
+        </ul>
       </nav>
 
-      {/* Hero Section */}
-      <section id="hero" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Agua Limpia, Accesible y Sustentable
+      {/* Hero */}
+      <section id="hero" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', padding: '8rem 4rem 4rem', position: 'relative', overflow: 'hidden', background: 'radial-gradient(ellipse 80% 80% at 70% 50%, rgba(14,165,233,0.12) 0%, transparent 60%), linear-gradient(135deg, #0c1a1a 0%, #071218 100%)' }}>
+        <div style={{ maxWidth: '700px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'inline-block', backgroundColor: 'rgba(14,165,233,0.15)', border: '1px solid rgba(14,165,233,0.4)', color: '#0ea5e9', fontSize: '0.75rem', fontWeight: 500, padding: '0.4rem 1rem', borderRadius: '2rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem', animation: 'fadeUp 0.8s ease both' }}>
+            💧 Biotecnología accesible
+          </div>
+          <h1 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(3rem, 7vw, 5.5rem)', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.03em', marginBottom: '1.5rem', animation: 'fadeUp 0.8s 0.1s ease both' }}>
+            Agua <em style={{ color: '#0ea5e9', fontStyle: 'italic' }}>limpia</em><br />para todos,<br /><span style={{ color: '#16a34a' }}>siempre.</span>
           </h1>
-          <p className="text-xl text-gray-700 mb-8 max-w-3xl mx-auto">
-            Filtro Biotecnológico de Bajo Costo para Purificación de Agua. Una solución innovadora diseñada para tu hogar y tu comunidad.
+          <p style={{ fontSize: '1.1rem', fontWeight: 300, color: 'rgba(240,249,255,0.7)', lineHeight: 1.7, maxWidth: '560px', marginBottom: '2.5rem', animation: 'fadeUp 0.8s 0.2s ease both' }}>
+            Un sistema de filtración modular que usa materiales naturales y principios biotecnológicos para purificar agua sin químicos costosos ni alto consumo de energía.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <button className="btn-primary">Descubre el Filtro</button>
-            <button className="btn-secondary">Saber Más</button>
-          </div>
-          <div className="mt-12">
-            <div className="text-6xl">💧</div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', animation: 'fadeUp 0.8s 0.3s ease both' }}>
+            <a href="#como-funciona" style={{ background: '#0ea5e9', color: '#0c1a1a', padding: '0.9rem 2.2rem', borderRadius: '3rem', fontSize: '0.95rem', fontWeight: 500, textDecoration: 'none', transition: 'all 0.3s', border: 'none', cursor: 'pointer' }} onMouseOver={(e) => { e.target.style.background = '#16a34a'; e.target.style.color = 'white'; e.target.style.transform = 'translateY(-2px)'; }} onMouseOut={(e) => { e.target.style.background = '#0ea5e9'; e.target.style.color = '#0c1a1a'; e.target.style.transform = 'translateY(0)'; }}>Cómo funciona</a>
+            <a href="#contacto" style={{ background: 'transparent', color: 'white', padding: '0.9rem 2.2rem', borderRadius: '3rem', fontSize: '0.95rem', fontWeight: 500, textDecoration: 'none', transition: 'all 0.3s', border: '1px solid rgba(240,249,255,0.3)', cursor: 'pointer' }} onMouseOver={(e) => { e.target.style.borderColor = '#0ea5e9'; e.target.style.color = '#0ea5e9'; }} onMouseOut={(e) => { e.target.style.borderColor = 'rgba(240,249,255,0.3)'; e.target.style.color = 'white'; }}>Quiero más info</a>
           </div>
         </div>
       </section>
 
-      {/* Problema Section */}
-      <section id="problema" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">¿Cuál es el Problema?</h2>
-          <p className="section-subtitle text-center">
-            Millones de personas consumen agua que no es completamente segura
-          </p>
+      {/* Problema */}
+      <section id="problema" style={{ padding: '6rem 4rem', background: 'linear-gradient(135deg, #071218 0%, #0c1a1a 100%)', borderTop: '1px solid rgba(14,165,233,0.1)' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#0ea5e9', marginBottom: '1rem' }}>El problema</div>
+          <blockquote style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(1.6rem, 3vw, 2.3rem)', fontStyle: 'italic', fontWeight: 700, lineHeight: 1.3, color: 'white', borderLeft: '4px solid #0ea5e9', paddingLeft: '2rem', marginBottom: '3rem' }}>
+            "Millones de personas consumen agua que no es completamente segura. Nuestro filtro transforma esa realidad."
+          </blockquote>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {[
-              { icon: '💧', title: 'Agua Turbia', desc: 'Contaminada con sedimentos y partículas' },
-              { icon: '👃', title: 'Mal Olor', desc: 'Presencia de cloro y contaminantes químicos' },
-              { icon: '🦠', title: 'Enfermedades', desc: 'Riesgo de infecciones gastrointestinales' },
-              { icon: '💰', title: 'Alto Costo', desc: 'Gasto constante en garrafones de agua' },
+              { icon: '🌊', text: 'Agua con turbidez, mal olor o contaminantes peligrosos' },
+              { icon: '💸', text: 'Alto gasto mensual en garrafones de agua embotellada' },
+              { icon: '🦠', text: 'Riesgo constante de enfermedades gastrointestinales' },
+              { icon: '🏭', text: 'Dependencia de soluciones poco sustentables y costosas' },
             ].map((item, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center">
-                <div className="text-4xl mb-3">{item.icon}</div>
-                <h3 className="font-bold text-lg text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-700 text-sm">{item.desc}</p>
+              <div key={idx} className="reveal" style={{ background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.15)', borderRadius: '12px', padding: '1.2rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', transition: 'all 0.3s', cursor: 'pointer' }} onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.4)'; e.currentTarget.style.background = 'rgba(14,165,233,0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(14,165,233,0.15)'; e.currentTarget.style.background = 'rgba(14,165,233,0.06)'; }}>
+                <span style={{ fontSize: '1.6rem' }}>{item.icon}</span>
+                <p style={{ fontSize: '0.95rem', color: 'rgba(240,249,255,0.8)' }}>{item.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Solucion Section */}
-      <section id="solucion" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-blue-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">Nuestra Solución</h2>
-          <p className="section-subtitle text-center">
-            Un sistema accesible, sustentable y eficiente
-          </p>
-          
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-12">
-            <p className="text-lg text-gray-700 text-center mb-6">
-              El Filtro Biotecnológico es un dispositivo de filtración modular que utiliza materiales naturales y principios de biotecnología para eliminar impurezas, mejorar la calidad del agua y reducir riesgos para la salud, sin necesidad de químicos costosos ni consumo elevado de energía.
-            </p>
-            <div className="flex justify-center">
-              <div className="bg-green-100 text-green-700 px-6 py-4 rounded-lg font-semibold">
-                ✓ Sin químicos agresivos • ✓ Bajo consumo de energía • ✓ Fácil de mantener
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Cómo Funciona Section */}
-      <section id="como-funciona" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">¿Cómo Funciona?</h2>
-          <p className="section-subtitle text-center">
-            3 etapas de filtración para agua pura y segura
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[
-              {
-                num: '1',
-                icon: '🪨',
-                title: 'Filtración Física',
-                materials: 'Grava + Arena',
-                desc: 'Retiene partículas grandes como tierra y sedimentos'
-              },
-              {
-                num: '2',
-                icon: '⚫',
-                title: 'Filtración Química',
-                materials: 'Carbón Activado',
-                desc: 'Elimina olores, cloro y compuestos orgánicos'
-              },
-              {
-                num: '3',
-                icon: '🌱',
-                title: 'Filtración Biotecnológica',
-                materials: 'Moringa / Biofilm',
-                desc: 'Elimina microorganismos y mejora la calidad microbiológica'
-              },
-            ].map((stage, idx) => (
-              <div key={idx} className="border-2 border-blue-200 rounded-lg p-6 hover:shadow-lg transition">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white font-bold text-lg mb-4 mx-auto">
-                  {stage.num}
-                </div>
-                <div className="text-4xl text-center mb-3">{stage.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">{stage.title}</h3>
-                <div className="bg-blue-50 text-blue-700 px-3 py-2 rounded text-sm font-semibold text-center mb-3">
-                  {stage.materials}
-                </div>
-                <p className="text-gray-700 text-center text-sm">{stage.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center bg-gradient-to-r from-blue-100 to-green-100 rounded-lg p-8">
-            <p className="text-lg font-semibold text-gray-900">
-              Resultado: Agua Limpia, Segura y Lista para Consumir
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Materiales Section */}
-      <section id="materiales" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">¿De Qué Está Hecho?</h2>
-          <p className="section-subtitle text-center">
-            Materiales accesibles, económicos y fáciles de reemplazar
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Componentes Principales</h3>
-              <ul className="space-y-3">
-                {[
-                  'Estructura de PVC o acrílico resistente',
-                  'Arena y grava para filtración inicial',
-                  'Carbón activado de alta calidad',
-                  'Material biotecnológico (moringa o bacterias seguras)',
-                  'Mallas y válvulas de control',
-                  'Sensor de turbidez (opcional) + microcontrolador',
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start text-gray-700">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-lg shadow p-6">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Ventajas de los Materiales</h3>
-              <div className="space-y-4">
-                <div className="border-l-4 border-green-600 pl-4">
-                  <p className="font-semibold text-gray-900">Accesibles</p>
-                  <p className="text-gray-700 text-sm">Se encuentran fácilmente en el mercado local</p>
-                </div>
-                <div className="border-l-4 border-blue-600 pl-4">
-                  <p className="font-semibold text-gray-900">Económicos</p>
-                  <p className="text-gray-700 text-sm">Precio final muy por debajo de otras soluciones</p>
-                </div>
-                <div className="border-l-4 border-green-600 pl-4">
-                  <p className="font-semibold text-gray-900">Remplazables</p>
-                  <p className="text-gray-700 text-sm">Componentes individuales fáciles de cambiar</p>
-                </div>
-                <div className="border-l-4 border-blue-600 pl-4">
-                  <p className="font-semibold text-gray-900">Duraderos</p>
-                  <p className="text-gray-700 text-sm">Larga vida útil con mantenimiento básico</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* A Quién Va Dirigido Section */}
-      <section id="usuarios" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">¿A Quién Va Dirigido?</h2>
-          <p className="section-subtitle text-center">
-            Una solución para muchas necesidades
-          </p>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-blue-50 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-blue-900 mb-6">Usuarios Principales</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <span className="text-3xl mr-4">👨‍👩‍👧‍👦</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">Familias en zonas de baja calidad de agua</p>
-                    <p className="text-gray-700 text-sm">Comunidades rurales y semiurbanas</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-green-50 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-green-900 mb-6">Usuarios Secundarios</h3>
-              <div className="space-y-4">
-                {[
-                  { icon: '🏫', title: 'Escuelas', desc: 'Para proveer agua segura a estudiantes' },
-                  { icon: '🏪', title: 'Pequeños Negocios', desc: 'Cafés, restaurantes y tiendas' },
-                  { icon: '🤝', title: 'Proyectos Sociales', desc: 'ONGs y iniciativas ambientales' },
-                ].map((user, idx) => (
-                  <div key={idx} className="flex items-start">
-                    <span className="text-3xl mr-4">{user.icon}</span>
-                    <div>
-                      <p className="font-semibold text-gray-900">{user.title}</p>
-                      <p className="text-gray-700 text-sm">{user.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 bg-gradient-to-r from-blue-100 to-green-100 rounded-lg p-8 text-center">
-            <h3 className="text-xl font-bold text-gray-900 mb-3">Perfil Típico del Usuario</h3>
-            <p className="text-gray-700">
-              Personas que gastan constantemente en garrafones, buscan soluciones económicas e interesadas en sustentabilidad
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Beneficios Section */}
-      <section id="beneficios" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-green-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">Beneficios Principales</h2>
-          
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { icon: '💰', title: 'Económico', desc: 'Reduce gasto en agua embotellada', color: 'blue' },
-              { icon: '🧬', title: 'Salud', desc: 'Mejora calidad del agua', color: 'green' },
-              { icon: '🌍', title: 'Ambiente', desc: 'Disminuye uso de plástico', color: 'emerald' },
-              { icon: '🛠️', title: 'Práctico', desc: 'Fácil de usar y mantener', color: 'sky' },
-            ].map((benefit, idx) => {
-              const colors = {
-                blue: 'from-blue-100 to-blue-50',
-                green: 'from-green-100 to-green-50',
-                emerald: 'from-emerald-100 to-emerald-50',
-                sky: 'from-sky-100 to-sky-50',
-              };
-              
-              return (
-                <div key={idx} className={`bg-gradient-to-br ${colors[benefit.color]} rounded-lg p-6 text-center shadow-md hover:shadow-lg transition`}>
-                  <div className="text-5xl mb-3">{benefit.icon}</div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">{benefit.title}</h3>
-                  <p className="text-gray-700 text-sm">{benefit.desc}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-3xl font-bold text-blue-600 mb-2">50%</p>
-              <p className="text-gray-700">Reducción de gasto en agua</p>
-            </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-3xl font-bold text-green-600 mb-2">99%</p>
-              <p className="text-gray-700">Eliminación de impurezas</p>
-            </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-3xl font-bold text-emerald-600 mb-2">12</p>
-              <p className="text-gray-700">Meses de vida útil</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Diferenciador Section */}
-      <section id="diferenciador" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">¿Por Qué Nosotros?</h2>
-          <p className="section-subtitle text-center">
-            No es solo un filtro, es una solución sustentable diseñada para la realidad local
-          </p>
-          
-          <div className="overflow-x-auto mb-8">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-blue-100 border-b-2 border-blue-600">
-                  <th className="px-6 py-4 font-bold text-gray-900">Alternativa</th>
-                  <th className="px-6 py-4 font-bold text-gray-900">Problema</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { alt: 'Garrafones', problem: 'Caros, contaminantes y dependencia continua' },
-                  { alt: 'Hervir agua', problem: 'Consume gas/electricidad y tiempo' },
-                  { alt: 'Filtros comerciales', problem: 'Muy costosos y difíciles de mantener' },
-                ].map((row, idx) => (
-                  <tr key={idx} className={`border-b ${idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
-                    <td className="px-6 py-4 text-gray-900 font-semibold">{row.alt}</td>
-                    <td className="px-6 py-4 text-gray-700">{row.problem}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              '✓ Bajo costo',
-              '✓ Tecnología biológica',
-              '✓ Fabricación local',
-              '✓ Fácil mantenimiento',
-            ].map((item, idx) => (
-              <div key={idx} className="bg-gradient-to-br from-green-100 to-green-50 rounded-lg p-6 text-center">
-                <p className="text-lg font-semibold text-green-900">{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Mantenimiento Section */}
-      <section id="mantenimiento" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">Mantenimiento Sencillo</h2>
-          <p className="section-subtitle text-center">
-            Diseñado para ser fácil de mantener sin conocimientos técnicos avanzados
-          </p>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { freq: 'Cada 3-4 meses', task: 'Cambio de biocapa', icon: '🔄' },
-              { freq: 'Cada 4-6 meses', task: 'Cambio de carbón activado', icon: '⚫' },
-              { freq: 'Cada 6-12 meses', task: 'Lavado de arena/grava', icon: '🪨' },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-lg shadow p-8 text-center">
-                <div className="text-5xl mb-4">{item.icon}</div>
-                <p className="text-lg font-bold text-blue-600 mb-2">{item.freq}</p>
-                <p className="text-gray-700 font-semibold">{item.task}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg p-8">
-            <p className="text-center text-lg text-gray-900">
-              💡 <span className="font-semibold">Todos los componentes son remplazables y accesibles</span> - No necesitas técnico especializado
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Impacto Section */}
-      <section id="impacto" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="section-title text-center">Nuestro Impacto</h2>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-blue-900 mb-6">Impacto en Salud</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <span className="text-3xl mr-4">🏥</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">Reducción de enfermedades</p>
-                    <p className="text-gray-700 text-sm">Menos infecciones gastrointestinales en la familia</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-3xl mr-4">💪</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">Mejor calidad de vida</p>
-                    <p className="text-gray-700 text-sm">Agua segura para beber, cocinar y usar</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-100 to-green-50 rounded-lg p-8">
-              <h3 className="text-2xl font-bold text-green-900 mb-6">Impacto Ambiental</h3>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <span className="text-3xl mr-4">♻️</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">Menos residuos plásticos</p>
-                    <p className="text-gray-700 text-sm">No necesitas garrafones de plástico constantemente</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <span className="text-3xl mr-4">🌱</span>
-                  <div>
-                    <p className="font-semibold text-gray-900">Educación ambiental</p>
-                    <p className="text-gray-700 text-sm">Aprende sobre purificación y sostenibilidad</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-12 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-lg p-12 text-center">
-            <h3 className="text-3xl font-bold mb-4">Ahorro Mensual Estimado</h3>
-            <p className="text-6xl font-bold mb-2">30-50%</p>
-            <p className="text-xl">en gastos de agua con respecto a garrafones</p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section id="contacto" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Empieza tu Viaje Hacia Agua Limpia
+      {/* Cómo Funciona */}
+      <section id="como-funciona" style={{ padding: '6rem 4rem', background: '#0c1a1a' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#0ea5e9', marginBottom: '1rem' }}>El proceso</div>
+          <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: '3rem' }}>
+            3 etapas de <em style={{ color: '#0ea5e9', fontStyle: 'italic' }}>purificación</em>
           </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Agua limpia, accesible y sustentable mediante biotecnología al alcance de todos
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <button className="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition text-lg">
-              Contactar Ahora
-            </button>
-            <button className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition text-lg">
-              Más Información
-            </button>
-          </div>
 
-          <div className="mt-12 grid md:grid-cols-3 gap-6 text-sm">
-            <div>
-              <p className="font-bold mb-2">Email</p>
-              <p className="opacity-90">info@filtroh2o.com</p>
+          {[
+            { num: '1', icon: '🪨', title: 'Filtración Física', desc: 'La primera barrera retiene partículas visibles: tierra, sedimentos y sólidos suspendidos que dan turbidez al agua.', tags: ['🪨 Grava', '⬜ Arena', '🧵 Algodón'], color: '#0ea5e9' },
+            { num: '2', icon: '⬛', title: 'Filtración Química', desc: 'El carbón activado actúa como esponja molecular, absorbiendo cloro, olores desagradables y compuestos orgánicos volátiles.', tags: ['⬛ Carbón Activado'], color: '#16a34a' },
+            { num: '3', icon: '🌱', title: 'Filtración Biotecnológica', desc: 'La etapa más avanzada usa moringa o biofilm bacteriano para eliminar microorganismos y mejorar la calidad microbiológica del agua.', tags: ['🌿 Moringa', '🧬 Biofilm bacteriano'], color: '#f59e0b' },
+          ].map((step, idx) => (
+            <div key={idx} style={{ display: 'grid', gridTemplateColumns: '96px 1fr', gap: '2rem', padding: '2rem 0', alignItems: 'start', opacity: 0, transform: 'translateX(-20px)', animation: `fadeInStep 0.6s ease ${idx * 0.2}s both` }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: '"Playfair Display", serif', fontSize: '1.5rem', fontWeight: 900, border: `2px solid ${step.color}`, color: step.color, background: '#0c1a1a', flexShrink: 0, position: 'relative', zIndex: 1 }}>
+                {step.num}
+              </div>
+              <div>
+                <h3 style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', color: step.color }}>
+                  {step.title}
+                </h3>
+                <p style={{ color: 'rgba(240,249,255,0.7)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '0.8rem' }}>
+                  {step.desc}
+                </p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {step.tags.map((tag, tidx) => (
+                    <span key={tidx} style={{ fontSize: '0.75rem', padding: '0.3rem 0.8rem', borderRadius: '2rem', fontWeight: 500, background: `rgba(${step.color === '#0ea5e9' ? '14,165,233' : step.color === '#16a34a' ? '22,163,74' : '245,158,11'},0.15)`, color: step.color }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="font-bold mb-2">Teléfono</p>
-              <p className="opacity-90">+XX (XXX) XXX-XXXX</p>
-            </div>
-            <div>
-              <p className="font-bold mb-2">Ubicación</p>
-              <p className="opacity-90">Tu Ciudad, País</p>
-            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Materiales */}
+      <section id="materiales" style={{ padding: '6rem 4rem', background: 'linear-gradient(180deg, #071218, #0c1a1a)', borderTop: '1px solid rgba(14,165,233,0.1)' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#0ea5e9', marginBottom: '1rem' }}>Composición</div>
+          <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: '1.5rem' }}>
+            <em style={{ color: '#0ea5e9', fontStyle: 'italic' }}>Materiales</em> accesibles<br />y sostenibles
+          </h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem', marginTop: '3rem' }}>
+            {[
+              { emoji: '🧪', name: 'PVC / Acrílico', desc: 'Estructura resistente y duradera que aloja el sistema de filtración' },
+              { emoji: '🪨', name: 'Arena & Grava', desc: 'Primera barrera de filtración física, retiene sedimentos' },
+              { emoji: '⬛', name: 'Carbón Activado', desc: 'Elimina olores, cloro y compuestos orgánicos perjudiciales' },
+              { emoji: '🌿', name: 'Moringa', desc: 'Agente biotecnológico natural con propiedades antimicrobianas' },
+              { emoji: '🔩', name: 'Mallas & Válvulas', desc: 'Sistema modular de control de flujo y separación de capas' },
+              { emoji: '📡', name: 'Sensor (opcional)', desc: 'Sensor de turbidez y microcontrolador para monitoreo inteligente' },
+            ].map((item, idx) => (
+              <div key={idx} className="reveal" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '16px', padding: '1.8rem 1.5rem', textAlign: 'center', transition: 'all 0.35s', cursor: 'pointer' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'rgba(14,165,233,0.3)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}>
+                <span style={{ fontSize: '2.5rem', marginBottom: '0.8rem', display: 'block' }}>{item.emoji}</span>
+                <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1rem', fontWeight: 700, marginBottom: '0.4rem' }}>
+                  {item.name}
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'rgba(240,249,255,0.5)', lineHeight: 1.5 }}>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Beneficios */}
+      <section id="beneficios" style={{ padding: '6rem 4rem', background: '#0c1a1a' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-block', fontSize: '0.7rem', fontWeight: 500, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#0ea5e9', marginBottom: '1rem' }}>Por qué elegirlo</div>
+          <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: '3rem' }}>
+            Beneficios que <em style={{ color: '#0ea5e9', fontStyle: 'italic' }}>transforman</em>
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+            {[
+              { icon: '💰', title: 'Económicos', bg: 'rgba(245,158,11,0.15)', items: ['Reduce gasto en agua embotellada', 'Bajo costo de mantenimiento', 'Materiales locales y asequibles'] },
+              { icon: '🧬', title: 'Salud', bg: 'rgba(244,114,182,0.15)', items: ['Mejora la calidad del agua', 'Reduce riesgo de enfermedades', 'Elimina microorganismos patógenos'] },
+              { icon: '🌱', title: 'Ambientales', bg: 'rgba(22,163,74,0.15)', items: ['Disminuye el uso de plástico', 'No requiere químicos agresivos', 'Tecnología eco-compatible'] },
+              { icon: '🛠️', title: 'Prácticos', bg: 'rgba(14,165,233,0.15)', items: ['Fácil de usar sin conocimientos técnicos', 'Mantenimiento sencillo', 'Modular y escalable'] },
+            ].map((item, idx) => (
+              <div key={idx} className="reveal" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '20px', padding: '2rem', transition: 'all 0.3s', cursor: 'pointer' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(14,165,233,0.4)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)'; }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', background: item.bg }}>
+                    {item.icon}
+                  </div>
+                  <div style={{ fontFamily: '"Playfair Display", serif', fontSize: '1.1rem', fontWeight: 700 }}>
+                    {item.title}
+                  </div>
+                </div>
+                <ul style={{ listStyle: 'none' }}>
+                  {item.items.map((li, lidx) => (
+                    <li key={lidx} style={{ fontSize: '0.9rem', color: 'rgba(240,249,255,0.7)', padding: '0.35rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ color: '#0ea5e9', fontSize: '0.8rem', flexShrink: 0 }}>→</span>
+                      {li}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section id="contacto" style={{ padding: '6rem 4rem', background: 'linear-gradient(135deg, #0369a1 0%, #065f46 100%)', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, lineHeight: 1.15, marginBottom: '1rem' }}>
+            Agua limpia, accesible y sustentable al alcance de todos
+          </h2>
+          <p style={{ fontSize: '1.05rem', color: 'rgba(255,255,255,0.8)', marginBottom: '2.5rem', lineHeight: 1.7 }}>
+            ¿Quieres saber más sobre AquaBio o llevar este filtro a tu comunidad?<br />
+            Déjanos tu correo y te contactamos.
+          </p>
+          <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <input type="email" placeholder="tu@correo.com" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '0.9rem 1.5rem', borderRadius: '3rem', fontSize: '0.95rem', outline: 'none', width: '280px', fontFamily: 'inherit', transition: 'border-color 0.3s' }} onFocus={(e) => e.target.style.borderColor = 'white'} onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.3)'} />
+            <button style={{ background: 'white', color: '#0369a1', padding: '0.9rem 2rem', borderRadius: '3rem', fontSize: '0.95rem', fontWeight: 500, border: 'none', cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.3s' }} onMouseOver={(e) => { e.target.style.background = '#0c1a1a'; e.target.style.color = 'white'; }} onMouseOut={(e) => { e.target.style.background = 'white'; e.target.style.color = '#0369a1'; }}>
+              Quiero saber más
+            </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="text-gray-400 mb-4">
-            © 2026 Filtro Biotecnológico H2O. Agua limpia para todos.
-          </p>
-          <div className="flex justify-center gap-6 text-sm">
-            <a href="#" className="hover:text-blue-400 transition">Privacidad</a>
-            <a href="#" className="hover:text-blue-400 transition">Términos</a>
-            <a href="#" className="hover:text-blue-400 transition">Contacto</a>
-          </div>
-        </div>
+      <footer style={{ background: '#060e0e', padding: '2rem 4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(14,165,233,0.1)', fontSize: '0.8rem', color: 'rgba(240,249,255,0.4)' }}>
+        <div>© 2026 AquaBio · Filtro Biotecnológico de Agua</div>
+        <div>Hecho con 💧 para comunidades sustentables</div>
       </footer>
+
+      <style>{`
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fadeInStep {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }
