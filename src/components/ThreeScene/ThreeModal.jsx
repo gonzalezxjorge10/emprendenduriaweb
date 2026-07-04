@@ -57,6 +57,23 @@ const ThreeModal = ({ isOpen, onClose }) => {
           }}
         />
 
+        {!isReady && (
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'rgba(255,255,255,0.85)',
+            background: 'rgba(0, 0, 0, 0.4)',
+            zIndex: 20,
+            fontSize: '1rem',
+            pointerEvents: 'none',
+          }}>
+            Cargando modelo 3D...
+          </div>
+        )}
+
         {/* Métricas */}
         {isReady && (
           <div className="three-metrics">

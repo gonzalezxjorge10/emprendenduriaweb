@@ -48,6 +48,10 @@ export const useThree = (containerRef, options = {}) => {
   const cameraFocusRef = useRef(cameraFocus);
   const metricsRef = useRef(metrics);
   const onComponentSelectRef = useRef(onComponentSelect);
+  const labelsContainerRef = useRef(null);
+  const connectorSvgRef = useRef(null);
+  const labelItemsRef = useRef([]);
+  const highlightedObjectRef = useRef(null);
 
   useEffect(() => {
     isExplodedRef.current = isExploded;
@@ -94,8 +98,20 @@ export const useThree = (containerRef, options = {}) => {
 
     hasInitializedRef.current = true;
     const container = containerRef.current;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const width = container.clientWidth || 1;
+    const height = container.clientHeight || 1;
+
+    if (width === 0 || height === 0) {
+      // Container has not been laid out yet, wait for next frame.
+      requestAnimationFrame(() => {
+        if (containerRef.current && !hasInitializedRef.current) {
+          initScene();
+        }
+      });
+      return () => {};
+    }
+
+    container.style.position = container.style.position || 'relative';
 
     // Scene
     const scene = new THREE.Scene();
@@ -127,6 +143,29 @@ export const useThree = (containerRef, options = {}) => {
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.035).texture;
     pmremGenerator.dispose();
+
+    // Optional label overlay for exploded view
+    if (!isCompact) {
+      const labelsContainer = document.createElement('div');
+      labelsContainer.className = 'three-labels-container';
+      labelsContainer.style.position = 'absolute';
+      labelsContainer.style.inset = '0';
+      labelsContainer.style.pointerEvents = 'none';
+      labelsContainer.style.zIndex = '9';
+      container.appendChild(labelsContainer);
+      labelsContainerRef.current = labelsContainer;
+
+      const connectorSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      connectorSvg.setAttribute('class', 'three-connector-svg');
+      connectorSvg.setAttribute('width', '100%');
+      connectorSvg.setAttribute('height', '100%');
+      connectorSvg.style.position = 'absolute';
+      connectorSvg.style.inset = '0';
+      connectorSvg.style.pointerEvents = 'none';
+      connectorSvg.style.zIndex = '8';
+      container.appendChild(connectorSvg);
+      connectorSvgRef.current = connectorSvg;
+    }
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -172,6 +211,7 @@ export const useThree = (containerRef, options = {}) => {
     };
 
     window.addEventListener('resize', handleResize);
+    requestAnimationFrame(handleResize);
 
     setIsReady(true);
 
@@ -228,6 +268,57 @@ export const useThree = (containerRef, options = {}) => {
   }, []);
 
   // Registro de partes para desglose
+  const clearHighlight = useCallback(() => {
+    const previous = highlightedObjectRef.current;
+    if (!previous) return;
+    previous.traverse((o) => {
+      if (o.isMesh && o.material && o.material.emissive) {
+        o.material.emissive.setHex(o.userData._origEmissive ?? 0x000000);
+        o.material.emissiveIntensity = o.userData._origEmissiveIntensity ?? 0;
+      }
+    });
+    highlightedObjectRef.current = null;
+  }, []);
+
+  const setHighlight = useCallback((mesh) => {
+    if (!mesh) return;
+    clearHighlight();
+    mesh.traverse((o) => {
+      if (o.isMesh && o.material && o.material.emissive) {
+        if (o.userData._origEmissive === undefined) {
+          o.userData._origEmissive = o.material.emissive.getHex();
+          o.userData._origEmissiveIntensity = o.material.emissiveIntensity ?? 0;
+        }
+        o.material.emissive.set(0x4fd8ff);
+        o.material.emissiveIntensity = 0.55;
+      }
+    });
+    highlightedObjectRef.current = mesh;
+  }, [clearHighlight]);
+
+  const selectObject = useCallback((mesh) => {
+    if (!mesh || !mesh.userData.title) return;
+    setSelectedObject(mesh);
+    setHighlight(mesh);
+    const callback = onComponentSelectRef.current;
+    if (callback) {
+      callback({ title: mesh.userData.title, desc: mesh.userData.desc });
+    }
+  }, [setHighlight]);
+
+  const updateLabelsVisibility = useCallback((visible) => {
+    if (!labelItemsRef.current || !labelItemsRef.current.length) return;
+    labelItemsRef.current.forEach((item) => {
+      if (item.element) {
+        item.element.style.opacity = visible ? '1' : '0';
+        item.element.style.pointerEvents = visible ? 'auto' : 'none';
+      }
+    });
+    if (connectorSvgRef.current && !visible) {
+      connectorSvgRef.current.innerHTML = '';
+    }
+  }, []);
+
   const registerPart = useCallback((mesh, explOffset, title, desc) => {
     if (!mesh.userData.assembledPos) {
       mesh.userData.assembledPos = mesh.position.clone();
@@ -246,8 +337,24 @@ export const useThree = (containerRef, options = {}) => {
     });
 
     registeredObjects.current.push(mesh);
+
+    if (labelsContainerRef.current) {
+      const label = document.createElement('div');
+      label.className = 'three-label';
+      label.innerHTML = `<strong>${title}</strong><span>${desc}</span>`;
+      label.style.position = 'absolute';
+      label.style.opacity = '0';
+      label.style.pointerEvents = 'none';
+      label.addEventListener('click', (event) => {
+        event.stopPropagation();
+        selectObject(mesh);
+      });
+      labelsContainerRef.current.appendChild(label);
+      labelItemsRef.current.push({ mesh, element: label });
+    }
+
     return mesh;
-  }, []);
+  }, [selectObject]);
 
   // Construcción del filtro industrial
   const buildIndustrialFilter = useCallback((scene, renderer) => {
@@ -640,16 +747,9 @@ export const useThree = (containerRef, options = {}) => {
   const handleClick = useCallback(() => {
     const hovered = hoveredObjectRef.current;
     if (hovered && hovered.userData.title) {
-      setSelectedObject(hovered);
-      const onComponentSelect = onComponentSelectRef.current;
-      if (onComponentSelect) {
-        onComponentSelect({
-          title: hovered.userData.title,
-          desc: hovered.userData.desc
-        });
-      }
+      selectObject(hovered);
     }
-  }, []);
+  }, [selectObject]);
 
   // Toggle explode
   const toggleExplode = useCallback(() => {
@@ -662,6 +762,7 @@ export const useThree = (containerRef, options = {}) => {
       isFilteringRef.current = false;
     }
     setSelectedObject(null);
+    updateLabelsVisibility(nextExploded);
     
     // Ajustar cámara
     if (!nextExploded) {
@@ -675,7 +776,7 @@ export const useThree = (containerRef, options = {}) => {
         target: DEFAULT_TARGET.clone()
       });
     }
-  }, []);
+  }, [updateLabelsVisibility]);
 
   // Toggle simulación
   const toggleSimulation = useCallback(() => {
@@ -785,6 +886,46 @@ export const useThree = (containerRef, options = {}) => {
       }
     });
 
+    // Labels and connectors for exploded view
+    if (isExplodedRef.current && labelItemsRef.current.length && connectorSvgRef.current && cameraRef.current && containerRef.current) {
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+      connectorSvgRef.current.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      let svgLines = '';
+
+      labelItemsRef.current.forEach((item) => {
+        const worldPos = new THREE.Vector3();
+        item.mesh.getWorldPosition(worldPos);
+        const projected = worldPos.project(cameraRef.current);
+        const px = (projected.x * 0.5 + 0.5) * width;
+        const py = (-projected.y * 0.5 + 0.5) * height;
+        const side = projected.x >= 0 ? 1 : -1;
+        const lx = Math.min(Math.max(px + side * 110, 12), width - 180);
+        const ly = Math.min(Math.max(py - 18, 12), height - 48);
+
+        item.element.style.left = `${lx}px`;
+        item.element.style.top = `${ly}px`;
+        item.element.style.opacity = '1';
+        item.element.style.pointerEvents = 'auto';
+
+        const labelAnchorX = lx + (side < 0 ? 150 : 0);
+        const labelAnchorY = ly + 18;
+
+        svgLines += `<line x1="${px}" y1="${py}" x2="${labelAnchorX}" y2="${labelAnchorY}" stroke="rgba(79,216,255,0.35)" stroke-width="1.5" stroke-dasharray="3,3"/>`;
+        svgLines += `<circle cx="${px}" cy="${py}" r="3" fill="#4fd8ff"/>`;
+      });
+
+      connectorSvgRef.current.innerHTML = svgLines;
+    } else if (connectorSvgRef.current) {
+      connectorSvgRef.current.innerHTML = '';
+      labelItemsRef.current.forEach(item => {
+        if (item.element) {
+          item.element.style.opacity = '0';
+          item.element.style.pointerEvents = 'none';
+        }
+      });
+    }
+
     // Water particles
     if (isFilteringRef.current && !isExplodedRef.current && sceneRef.current) {
       if (Math.random() > 0.15) {
@@ -888,6 +1029,18 @@ export const useThree = (containerRef, options = {}) => {
       registeredObjects.current = [];
       waterParticles.current = [];
       splashes.current = [];
+      labelItemsRef.current.forEach(item => {
+        if (item.element && item.element.parentElement) {
+          item.element.parentElement.removeChild(item.element);
+        }
+      });
+      labelItemsRef.current = [];
+      if (connectorSvgRef.current && connectorSvgRef.current.parentElement) {
+        connectorSvgRef.current.parentElement.removeChild(connectorSvgRef.current);
+      }
+      if (labelsContainerRef.current && labelsContainerRef.current.parentElement) {
+        labelsContainerRef.current.parentElement.removeChild(labelsContainerRef.current);
+      }
     };
   }, [isOpen, initScene, animate, handlePointerMove, handleClick]);
 
