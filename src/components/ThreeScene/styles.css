@@ -1,0 +1,342 @@
+/* Contenedor del visor 3D */
+.three-viewer-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  background: radial-gradient(ellipse at 50% 20%, #0b1526 0%, #03060c 60%);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: grab;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+.three-viewer-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.three-viewer-container.grabbing {
+  cursor: grabbing;
+}
+
+.three-viewer-container.pointable {
+  cursor: pointer;
+}
+
+/* Badge de interacción */
+.three-interact-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 8px 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(79, 216, 255, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 11px;
+  letter-spacing: 1px;
+  pointer-events: none;
+  animation: pulse-badge 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* Overlay de "Click para expandir" */
+.three-expand-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.three-viewer-container:hover .three-expand-overlay {
+  opacity: 1;
+}
+
+.three-expand-overlay span {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  padding: 12px 24px;
+  border-radius: 30px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid rgba(79, 216, 255, 0.3);
+  pointer-events: none;
+}
+
+/* Modal */
+.three-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.three-modal-content {
+  position: relative;
+  width: 95vw;
+  height: 90vh;
+  max-width: 1400px;
+  background: radial-gradient(ellipse at 50% 20%, #0b1526 0%, #03060c 60%);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+}
+
+.three-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.three-modal-close:hover {
+  background: rgba(239, 90, 111, 0.3);
+  border-color: rgba(239, 90, 111, 0.5);
+  transform: rotate(90deg);
+}
+
+/* Controles del modal */
+.three-modal-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 12px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.three-modal-controls button {
+  padding: 8px 18px;
+  background: linear-gradient(160deg, #1b3a8a, #14245c);
+  color: #eaf3ff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(20, 36, 92, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.three-modal-controls button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+}
+
+.three-modal-controls button:active {
+  transform: translateY(0);
+}
+
+.three-modal-controls button.active {
+  background: linear-gradient(160deg, #0d9e6c, #086b49);
+}
+
+.three-modal-controls button.explode {
+  background: linear-gradient(160deg, #7c3aed, #57249c);
+}
+
+.three-modal-controls button.ghost {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+}
+
+.three-modal-controls button.ghost.active {
+  background: rgba(79, 216, 255, 0.16);
+  color: #4fd8ff;
+}
+
+/* Panel de info en modal */
+.three-modal-info {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  z-index: 12;
+  background: rgba(9, 14, 26, 0.62);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  border-radius: 14px;
+  padding: 16px 20px;
+  max-width: 320px;
+  transform: translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+
+.three-modal-info.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.three-modal-info .tag {
+  font-size: 9.5px;
+  letter-spacing: 2px;
+  color: #a78bfa;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.three-modal-info h3 {
+  margin: 6px 0 6px;
+  font-size: 16px;
+  color: #eef4fb;
+}
+
+.three-modal-info p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #8ea3bd;
+}
+
+.three-modal-info .close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  cursor: pointer;
+  color: #8ea3bd;
+  font-size: 14px;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+}
+
+.three-modal-info .close:hover {
+  color: #eef4fb;
+}
+
+/* Métricas en el modal */
+.three-metrics {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 12;
+  background: rgba(9, 14, 26, 0.62);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  border-radius: 14px;
+  padding: 16px 20px;
+  min-width: 180px;
+}
+
+.three-metrics .metric {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #8ea3bd;
+}
+
+.three-metrics .metric .value {
+  color: #eef4fb;
+  font-weight: 600;
+}
+
+.three-metrics .metric .value.accent {
+  color: #4fd8ff;
+}
+
+.three-metrics .metric .value.success {
+  color: #22c58a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .three-viewer-container {
+    min-height: 300px;
+  }
+  
+  .three-modal-content {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+  
+  .three-modal-controls {
+    bottom: 12px;
+    padding: 8px 12px;
+    gap: 8px;
+    width: 95%;
+  }
+  
+  .three-modal-controls button {
+    font-size: 9px;
+    padding: 6px 12px;
+  }
+  
+  .three-modal-info {
+    bottom: 80px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+  }
+  
+  .three-metrics {
+    top: 10px;
+    left: 10px;
+    padding: 10px 14px;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .three-viewer-container {
+    min-height: 250px;
+  }
+}
